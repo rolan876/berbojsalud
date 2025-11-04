@@ -516,12 +516,24 @@
                 console.log('Número de Referencia:', referenceNum);
                 console.log('================================');
 
-                // Aquí iría la conexión a Google Sheets
-                // Ejemplo de URL de Google Apps Script:
-                // fetch('https://script.google.com/macros/s/TU_SCRIPT_ID/exec', {
-                //     method: 'POST',
-                //     body: JSON.stringify(formData)
-                // });
+               // URLs DE GOOGLE APPS SCRIPT
+const URL_SABANALARGA = 'TU_URL_DE_SABANALARGA_AQUI';
+const URL_BARANOA = 'TU_URL_DE_BARANOA_AQUI';
+
+// Enviar a Google Sheets
+const url = formData.sede === 'Sabanalarga' ? URL_SABANALARGA : URL_BARANOA;
+
+fetch(url, {
+  method: 'POST',
+  body: JSON.stringify(formData)
+}).then(response => response.json())
+  .then(data => {
+    if(data.success) {
+      // Mostrar éxito
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('successMessage').style.display = 'block';
+    }
+  });
 
             }, 2000);
         });
@@ -539,4 +551,5 @@
         });
     </script>
 </body>
+
 </html>
