@@ -438,117 +438,219 @@
     </div>
 
     <script>
-        // Manejo de selección de horario visual
-        const optionManana = document.getElementById('optionManana');
-        const optionTarde = document.getElementById('optionTarde');
+// CONFIGURACIÓN - PON AQUÍ TUS URLs DE GOOGLE APPS SCRIPT
+const URL_SABANALARGA = https://script.google.com/macros/s/AKfycbwNw4pj8712FpQNoh6fhnSTGyCkjdm0Iz4VMFrPw9YcXsChOW7XqYPAV0RuOyny80ou/exec;
+const URL_BARANOA = https://script.google.com/macros/s/AKfycbwExHAEkGMHg1WFS6fpgjCnma6WGGpLn0Ciu9GpjSLvwrefNRNecaLKlPXx8DTrOzt9-g/exec;
 
-        optionManana.addEventListener('click', function() {
-            optionManana.classList.add('selected');
-            optionTarde.classList.remove('selected');
-        });
+// Manejo de selección de sede visual
+const optionSabanalarga = document.getElementById('optionSabanalarga');
+const optionBaranoa = document.getElementById('optionBaranoa');
 
-        optionTarde.addEventListener('click', function() {
-            optionTarde.classList.add('selected');
-            optionManana.classList.remove('selected');
-        });
+optionSabanalarga.addEventListener('click', function() {
+    optionSabanalarga.classList.add('selected');
+    optionBaranoa.classList.remove('selected');
+});
 
-        // Manejar el envío del formulario
-        document.getElementById('appointmentForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+optionBaranoa.addEventListener('click', function() {
+    optionBaranoa.classList.add('selected');
+    optionSabanalarga.classList.remove('selected');
+});
 
-            // Deshabilitar botón
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
+// Manejo de selección de horario visual
+const optionManana = document.getElementById('optionManana');
+const optionTarde = document.getElementById('optionTarde');
 
-            // Mostrar loading
-            document.getElementById('loading').style.display = 'block';
-            submitBtn.style.display = 'none';
+optionManana.addEventListener('click', function() {
+    optionManana.classList.add('selected');
+    optionTarde.classList.remove('selected');
+});
 
-            // Obtener horario seleccionado
-            const horarioSeleccionado = document.querySelector('input[name="horario"]:checked');
+optionTarde.addEventListener('click', function() {
+    optionTarde.classList.add('selected');
+    optionManana.classList.remove('selected');
+});
 
-            // Recopilar datos del formulario
-            const formData = {
-                timestamp: new Date().toLocaleString('es-CO', { 
-                    timeZone: 'America/Bogota',
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                }),
-                municipio: document.getElementById('municipio').value,
-                nombreCompleto: document.getElementById('nombreCompleto').value,
-                tipoIdentificacion: document.getElementById('tipoIdentificacion').value,
-                numeroIdentificacion: document.getElementById('numeroIdentificacion').value,
-                whatsapp: document.getElementById('whatsapp').value,
-                motivoSolicitud: document.getElementById('motivoSolicitud').value,
-                especialidad: document.getElementById('especialidad').value,
-                horarioPreferido: horarioSeleccionado ? horarioSeleccionado.value : '',
-                observaciones: document.getElementById('observaciones').value
-            };
+// Validar checkbox de privacidad y enviar formulario
+document.getElementById('appointmentForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
 
-            // Simular envío (en producción aquí conectarías con Google Sheets)
-            setTimeout(() => {
-                // Generar número de referencia
-                const referenceNum = 'BS' + Date.now().toString().slice(-8);
-                
-                // Mostrar mensaje de éxito
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('successMessage').style.display = 'block';
-                document.getElementById('referenceNumber').textContent = referenceNum;
-
-                // Ocultar formulario
-                e.target.style.display = 'none';
-
-                // Log para desarrollo (en producción esto iría a Google Sheets)
-                console.log('=== DATOS DE CITA RECIBIDOS ===');
-                console.log('Fecha/Hora:', formData.timestamp);
-                console.log('Municipio:', formData.municipio);
-                console.log('Paciente:', formData.nombreCompleto);
-                console.log('Identificación:', formData.tipoIdentificacion + ' - ' + formData.numeroIdentificacion);
-                console.log('WhatsApp:', formData.whatsapp);
-                console.log('Motivo:', formData.motivoSolicitud);
-                console.log('Especialidad:', formData.especialidad);
-                console.log('Horario:', formData.horarioPreferido);
-                console.log('Observaciones:', formData.observaciones);
-                console.log('Número de Referencia:', referenceNum);
-                console.log('================================');
-
-                // URLs DE GOOGLE APPS SCRIPT
-                const URL_SABANALARGA = https://script.google.com/macros/s/AKfycbwNw4pj8712FpQNoh6fhnSTGyCkjdm0Iz4VMFrPw9YcXsChOW7XqYPAV0RuOyny80ou/exec;
-                const URL_BARANOA = https://script.google.com/macros/s/AKfycbwExHAEkGMHg1WFS6fpgjCnma6WGGpLn0Ciu9GpjSLvwrefNRNecaLKlPXx8DTrOzt9-g/exec;
-
-                // Enviar a Google Sheets
-               const url = formData.sede === 'Sabanalarga' ? URL_SABANALARGA : URL_BARANOA;
-
- fetch(url, {
-  method: 'POST',
-  body: JSON.stringify(formData)
-}).then(response => response.json())
-  .then(data => {
-    if(data.success) {
-      // Mostrar éxito
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('successMessage').style.display = 'block';
+    if (!document.getElementById('privacyAccept').checked) {
+        alert('Debe aceptar el aviso de privacidad para continuar.');
+        return;
     }
-  });
 
-            }, 2000);
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    document.getElementById('loading').style.display = 'block';
+    submitBtn.style.display = 'none';
+
+    const sedeSeleccionada = document.querySelector('input[name="sede"]:checked');
+    const horarioSeleccionado = document.querySelector('input[name="horario"]:checked');
+
+    const formData = {
+        timestamp: new Date().toLocaleString('es-CO', { 
+            timeZone: 'America/Bogota'
+        }),
+        sede: sedeSeleccionada ? sedeSeleccionada.value : '',
+        municipio: document.getElementById('municipio').value,
+        nombreCompleto: document.getElementById('nombreCompleto').value,
+        tipoIdentificacion: document.getElementById('tipoIdentificacion').value,
+        numeroIdentificacion: document.getElementById('numeroIdentificacion').value,
+        whatsapp: document.getElementById('whatsapp').value,
+        motivoSolicitud: document.getElementById('motivoSolicitud').value,
+        especialidad: document.getElementById('especialidad').value,
+        horarioPreferido: horarioSeleccionado ? horarioSeleccionado.value : '',
+        observaciones: document.getElementById('observaciones').value
+    };
+
+    // ENVIAR A GOOGLE SHEETS
+    const url = formData.sede === 'Sabanalarga' ? URL_SABANALARGA : URL_BARANOA;
+    
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
         });
 
-        // Validación de número de WhatsApp
-        document.getElementById('whatsapp').addEventListener('input', function(e) {
-            // Permitir solo números
-            this.value = this.value.replace(/[^0-9]/g, '');
+        // Con no-cors no podemos leer la respuesta, pero si llega aquí es que se envió
+        const referenceNum = 'BS-' + formData.sede.substring(0,3).toUpperCase() + '-' + Date.now().toString().slice(-6);
+        
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'block';
+        document.getElementById('referenceNumber').textContent = referenceNum;
+        document.getElementById('appointmentForm').style.display = 'none';
+        
+        console.log('Datos enviados correctamente');
+        
+    } catch (error) {
+        console.error('Error al enviar:', error);
+        alert('Hubo un error al enviar la solicitud. Por favor intente nuevamente.');
+        submitBtn.disabled = false;
+        document.getElementById('loading').style.display = 'none';
+        submitBtn.style.display = 'block';
+    }
+});
+
+// Validación de número de WhatsApp
+document.getElementById('whatsapp').addEventListener('input', function(e) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+
+// Validación de número de identificación
+document.getElementById('numeroIdentificacion').addEventListener('input', function(e) {
+    this.value = this.value.replace(/[^0-9A-Za-z]/g, '');
+});
+<script>
+// CONFIGURACIÓN - PON AQUÍ TUS URLs DE GOOGLE APPS SCRIPT
+const URL_SABANALARGA = 'AQUI_TU_URL_SABANALARGA';
+const URL_BARANOA = 'AQUI_TU_URL_BARANOA';
+
+// Manejo de selección de sede visual
+const optionSabanalarga = document.getElementById('optionSabanalarga');
+const optionBaranoa = document.getElementById('optionBaranoa');
+
+optionSabanalarga.addEventListener('click', function() {
+    optionSabanalarga.classList.add('selected');
+    optionBaranoa.classList.remove('selected');
+});
+
+optionBaranoa.addEventListener('click', function() {
+    optionBaranoa.classList.add('selected');
+    optionSabanalarga.classList.remove('selected');
+});
+
+// Manejo de selección de horario visual
+const optionManana = document.getElementById('optionManana');
+const optionTarde = document.getElementById('optionTarde');
+
+optionManana.addEventListener('click', function() {
+    optionManana.classList.add('selected');
+    optionTarde.classList.remove('selected');
+});
+
+optionTarde.addEventListener('click', function() {
+    optionTarde.classList.add('selected');
+    optionManana.classList.remove('selected');
+});
+
+// Validar checkbox de privacidad y enviar formulario
+document.getElementById('appointmentForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    if (!document.getElementById('privacyAccept').checked) {
+        alert('Debe aceptar el aviso de privacidad para continuar.');
+        return;
+    }
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    document.getElementById('loading').style.display = 'block';
+    submitBtn.style.display = 'none';
+
+    const sedeSeleccionada = document.querySelector('input[name="sede"]:checked');
+    const horarioSeleccionado = document.querySelector('input[name="horario"]:checked');
+
+    const formData = {
+        timestamp: new Date().toLocaleString('es-CO', { 
+            timeZone: 'America/Bogota'
+        }),
+        sede: sedeSeleccionada ? sedeSeleccionada.value : '',
+        municipio: document.getElementById('municipio').value,
+        nombreCompleto: document.getElementById('nombreCompleto').value,
+        tipoIdentificacion: document.getElementById('tipoIdentificacion').value,
+        numeroIdentificacion: document.getElementById('numeroIdentificacion').value,
+        whatsapp: document.getElementById('whatsapp').value,
+        motivoSolicitud: document.getElementById('motivoSolicitud').value,
+        especialidad: document.getElementById('especialidad').value,
+        horarioPreferido: horarioSeleccionado ? horarioSeleccionado.value : '',
+        observaciones: document.getElementById('observaciones').value
+    };
+
+    // ENVIAR A GOOGLE SHEETS
+    const url = formData.sede === 'Sabanalarga' ? URL_SABANALARGA : URL_BARANOA;
+    
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
         });
 
-        // Validación de número de identificación
-        document.getElementById('numeroIdentificacion').addEventListener('input', function(e) {
-            // Permitir solo números y algunas letras para pasaportes
-            this.value = this.value.replace(/[^0-9A-Za-z]/g, '');
-        });
-    </script>
+        // Con no-cors no podemos leer la respuesta, pero si llega aquí es que se envió
+        const referenceNum = 'BS-' + formData.sede.substring(0,3).toUpperCase() + '-' + Date.now().toString().slice(-6);
+        
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'block';
+        document.getElementById('referenceNumber').textContent = referenceNum;
+        document.getElementById('appointmentForm').style.display = 'none';
+        
+        console.log('Datos enviados correctamente');
+        
+    } catch (error) {
+        console.error('Error al enviar:', error);
+        alert('Hubo un error al enviar la solicitud. Por favor intente nuevamente.');
+        submitBtn.disabled = false;
+        document.getElementById('loading').style.display = 'none';
+        submitBtn.style.display = 'block';
+    }
+});
+
+// Validación de número de WhatsApp
+document.getElementById('whatsapp').addEventListener('input', function(e) {
+    this.value = this.value.replace(/[^0-9]/g, '');
+});
+
+// Validación de número de identificación
+document.getElementById('numeroIdentificacion').addEventListener('input', function(e) {
+    this.value = this.value.replace(/[^0-9A-Za-z]/g, '');
+});
+</script>
 </body>
 </html>
