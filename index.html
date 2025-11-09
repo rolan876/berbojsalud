@@ -437,220 +437,133 @@
         </div>
     </div>
 
-    <script>
-// CONFIGURACIÓN - PON AQUÍ TUS URLs DE GOOGLE APPS SCRIPT
-const URL_SABANALARGA = https://script.google.com/macros/s/AKfycbwNw4pj8712FpQNoh6fhnSTGyCkjdm0Iz4VMFrPw9YcXsChOW7XqYPAV0RuOyny80ou/exec;
-const URL_BARANOA = https://script.google.com/macros/s/AKfycbwExHAEkGMHg1WFS6fpgjCnma6WGGpLn0Ciu9GpjSLvwrefNRNecaLKlPXx8DTrOzt9-g/exec;
+   <script>
+    // URLS DE GOOGLE APPS SCRIPT - CON COMILLAS
+    const URL_SABANALARGA = 'https://script.google.com/macros/s/AKfycbwNw4pj8712FpQNoh6fhnSTGyCkjdm0Iz4VMFrPw9YcXsChOW7XqYPAV0RuOyny80ou/exec';
+    const URL_BARANOA = 'https://script.google.com/macros/s/AKfycbwExHAEkGMHg1WFS6fpgjCnma6WGGpLn0Ciu9GpjSLvwrefNRNecaLKlPXx8DTrOzt9-g/exec';
 
-// Manejo de selección de sede visual
-const optionSabanalarga = document.getElementById('optionSabanalarga');
-const optionBaranoa = document.getElementById('optionBaranoa');
+    // Manejo de selección de sede
+    const optionSabanalarga = document.getElementById('optionSabanalarga');
+    const optionBaranoa = document.getElementById('optionBaranoa');
 
-optionSabanalarga.addEventListener('click', function() {
-    optionSabanalarga.classList.add('selected');
-    optionBaranoa.classList.remove('selected');
-});
+    optionSabanalarga.addEventListener('click', function() {
+        optionSabanalarga.classList.add('selected');
+        optionBaranoa.classList.remove('selected');
+    });
 
-optionBaranoa.addEventListener('click', function() {
-    optionBaranoa.classList.add('selected');
-    optionSabanalarga.classList.remove('selected');
-});
+    optionBaranoa.addEventListener('click', function() {
+        optionBaranoa.classList.add('selected');
+        optionSabanalarga.classList.remove('selected');
+    });
 
-// Manejo de selección de horario visual
-const optionManana = document.getElementById('optionManana');
-const optionTarde = document.getElementById('optionTarde');
+    // Manejo de selección de horario
+    const optionManana = document.getElementById('optionManana');
+    const optionTarde = document.getElementById('optionTarde');
 
-optionManana.addEventListener('click', function() {
-    optionManana.classList.add('selected');
-    optionTarde.classList.remove('selected');
-});
+    optionManana.addEventListener('click', function() {
+        optionManana.classList.add('selected');
+        optionTarde.classList.remove('selected');
+    });
 
-optionTarde.addEventListener('click', function() {
-    optionTarde.classList.add('selected');
-    optionManana.classList.remove('selected');
-});
+    optionTarde.addEventListener('click', function() {
+        optionTarde.classList.add('selected');
+        optionManana.classList.remove('selected');
+    });
 
-// Validar checkbox de privacidad y enviar formulario
-document.getElementById('appointmentForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
+    // Envío del formulario
+    document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+        e.preventDefault(); // IMPORTANTE - Previene que se recargue la página
 
-    if (!document.getElementById('privacyAccept').checked) {
-        alert('Debe aceptar el aviso de privacidad para continuar.');
-        return;
-    }
+        console.log('Formulario enviado'); // Para ver en consola
 
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    document.getElementById('loading').style.display = 'block';
-    submitBtn.style.display = 'none';
+        // Validar privacidad
+        if (!document.getElementById('privacyAccept').checked) {
+            alert('Debe aceptar el aviso de privacidad para continuar.');
+            return;
+        }
 
-    const sedeSeleccionada = document.querySelector('input[name="sede"]:checked');
-    const horarioSeleccionado = document.querySelector('input[name="horario"]:checked');
+        // Deshabilitar botón
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        document.getElementById('loading').style.display = 'block';
+        submitBtn.style.display = 'none';
 
-    const formData = {
-        timestamp: new Date().toLocaleString('es-CO', { 
-            timeZone: 'America/Bogota'
-        }),
-        sede: sedeSeleccionada ? sedeSeleccionada.value : '',
-        municipio: document.getElementById('municipio').value,
-        nombreCompleto: document.getElementById('nombreCompleto').value,
-        tipoIdentificacion: document.getElementById('tipoIdentificacion').value,
-        numeroIdentificacion: document.getElementById('numeroIdentificacion').value,
-        whatsapp: document.getElementById('whatsapp').value,
-        motivoSolicitud: document.getElementById('motivoSolicitud').value,
-        especialidad: document.getElementById('especialidad').value,
-        horarioPreferido: horarioSeleccionado ? horarioSeleccionado.value : '',
-        observaciones: document.getElementById('observaciones').value
-    };
+        // Obtener valores
+        const sedeSeleccionada = document.querySelector('input[name="sede"]:checked');
+        const horarioSeleccionado = document.querySelector('input[name="horario"]:checked');
 
-    // ENVIAR A GOOGLE SHEETS
-    const url = formData.sede === 'Sabanalarga' ? URL_SABANALARGA : URL_BARANOA;
-    
-    try {
-        const response = await fetch(url, {
+        // Validar que se haya seleccionado sede
+        if (!sedeSeleccionada) {
+            alert('Por favor selecciona una sede');
+            submitBtn.disabled = false;
+            document.getElementById('loading').style.display = 'none';
+            submitBtn.style.display = 'block';
+            return;
+        }
+
+        // Crear objeto con datos
+        const formData = {
+            sede: sedeSeleccionada.value,
+            municipio: document.getElementById('municipio').value,
+            nombreCompleto: document.getElementById('nombreCompleto').value,
+            tipoIdentificacion: document.getElementById('tipoIdentificacion').value,
+            numeroIdentificacion: document.getElementById('numeroIdentificacion').value,
+            whatsapp: document.getElementById('whatsapp').value,
+            motivoSolicitud: document.getElementById('motivoSolicitud').value,
+            especialidad: document.getElementById('especialidad').value,
+            horarioPreferido: horarioSeleccionado ? horarioSeleccionado.value : '',
+            observaciones: document.getElementById('observaciones').value
+        };
+
+        console.log('Datos a enviar:', formData); // Para ver en consola
+
+        // Seleccionar URL según sede
+        const url = formData.sede === 'Sabanalarga' ? URL_SABANALARGA : URL_BARANOA;
+        
+        console.log('Enviando a:', url); // Para ver en consola
+
+        // Enviar a Google Sheets
+        fetch(url, {
             method: 'POST',
             mode: 'no-cors',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'text/plain'
             },
             body: JSON.stringify(formData)
+        })
+        .then(function() {
+            console.log('Enviado exitosamente');
+            
+            // Generar número de referencia
+            const referenceNum = 'BS-' + formData.sede.substring(0,3).toUpperCase() + '-' + Date.now().toString().slice(-6);
+            
+            // Mostrar mensaje de éxito
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('referenceNumber').textContent = referenceNum;
+            
+            // Ocultar formulario
+            document.getElementById('appointmentForm').style.display = 'none';
+        })
+        .catch(function(error) {
+            console.error('Error al enviar:', error);
+            alert('Hubo un error al enviar la solicitud. Por favor intente nuevamente.');
+            
+            // Rehabilitar botón
+            submitBtn.disabled = false;
+            document.getElementById('loading').style.display = 'none';
+            submitBtn.style.display = 'block';
         });
+    });
 
-        // Con no-cors no podemos leer la respuesta, pero si llega aquí es que se envió
-        const referenceNum = 'BS-' + formData.sede.substring(0,3).toUpperCase() + '-' + Date.now().toString().slice(-6);
-        
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('successMessage').style.display = 'block';
-        document.getElementById('referenceNumber').textContent = referenceNum;
-        document.getElementById('appointmentForm').style.display = 'none';
-        
-        console.log('Datos enviados correctamente');
-        
-    } catch (error) {
-        console.error('Error al enviar:', error);
-        alert('Hubo un error al enviar la solicitud. Por favor intente nuevamente.');
-        submitBtn.disabled = false;
-        document.getElementById('loading').style.display = 'none';
-        submitBtn.style.display = 'block';
-    }
-});
+    // Validaciones
+    document.getElementById('whatsapp').addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
 
-// Validación de número de WhatsApp
-document.getElementById('whatsapp').addEventListener('input', function(e) {
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
-
-// Validación de número de identificación
-document.getElementById('numeroIdentificacion').addEventListener('input', function(e) {
-    this.value = this.value.replace(/[^0-9A-Za-z]/g, '');
-});
-<script>
-// CONFIGURACIÓN - PON AQUÍ TUS URLs DE GOOGLE APPS SCRIPT
-const URL_SABANALARGA = 'AQUI_TU_URL_SABANALARGA';
-const URL_BARANOA = 'AQUI_TU_URL_BARANOA';
-
-// Manejo de selección de sede visual
-const optionSabanalarga = document.getElementById('optionSabanalarga');
-const optionBaranoa = document.getElementById('optionBaranoa');
-
-optionSabanalarga.addEventListener('click', function() {
-    optionSabanalarga.classList.add('selected');
-    optionBaranoa.classList.remove('selected');
-});
-
-optionBaranoa.addEventListener('click', function() {
-    optionBaranoa.classList.add('selected');
-    optionSabanalarga.classList.remove('selected');
-});
-
-// Manejo de selección de horario visual
-const optionManana = document.getElementById('optionManana');
-const optionTarde = document.getElementById('optionTarde');
-
-optionManana.addEventListener('click', function() {
-    optionManana.classList.add('selected');
-    optionTarde.classList.remove('selected');
-});
-
-optionTarde.addEventListener('click', function() {
-    optionTarde.classList.add('selected');
-    optionManana.classList.remove('selected');
-});
-
-// Validar checkbox de privacidad y enviar formulario
-document.getElementById('appointmentForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    if (!document.getElementById('privacyAccept').checked) {
-        alert('Debe aceptar el aviso de privacidad para continuar.');
-        return;
-    }
-
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    document.getElementById('loading').style.display = 'block';
-    submitBtn.style.display = 'none';
-
-    const sedeSeleccionada = document.querySelector('input[name="sede"]:checked');
-    const horarioSeleccionado = document.querySelector('input[name="horario"]:checked');
-
-    const formData = {
-        timestamp: new Date().toLocaleString('es-CO', { 
-            timeZone: 'America/Bogota'
-        }),
-        sede: sedeSeleccionada ? sedeSeleccionada.value : '',
-        municipio: document.getElementById('municipio').value,
-        nombreCompleto: document.getElementById('nombreCompleto').value,
-        tipoIdentificacion: document.getElementById('tipoIdentificacion').value,
-        numeroIdentificacion: document.getElementById('numeroIdentificacion').value,
-        whatsapp: document.getElementById('whatsapp').value,
-        motivoSolicitud: document.getElementById('motivoSolicitud').value,
-        especialidad: document.getElementById('especialidad').value,
-        horarioPreferido: horarioSeleccionado ? horarioSeleccionado.value : '',
-        observaciones: document.getElementById('observaciones').value
-    };
-
-    // ENVIAR A GOOGLE SHEETS
-    const url = formData.sede === 'Sabanalarga' ? URL_SABANALARGA : URL_BARANOA;
-    
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        });
-
-        // Con no-cors no podemos leer la respuesta, pero si llega aquí es que se envió
-        const referenceNum = 'BS-' + formData.sede.substring(0,3).toUpperCase() + '-' + Date.now().toString().slice(-6);
-        
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('successMessage').style.display = 'block';
-        document.getElementById('referenceNumber').textContent = referenceNum;
-        document.getElementById('appointmentForm').style.display = 'none';
-        
-        console.log('Datos enviados correctamente');
-        
-    } catch (error) {
-        console.error('Error al enviar:', error);
-        alert('Hubo un error al enviar la solicitud. Por favor intente nuevamente.');
-        submitBtn.disabled = false;
-        document.getElementById('loading').style.display = 'none';
-        submitBtn.style.display = 'block';
-    }
-});
-
-// Validación de número de WhatsApp
-document.getElementById('whatsapp').addEventListener('input', function(e) {
-    this.value = this.value.replace(/[^0-9]/g, '');
-});
-
-// Validación de número de identificación
-document.getElementById('numeroIdentificacion').addEventListener('input', function(e) {
-    this.value = this.value.replace(/[^0-9A-Za-z]/g, '');
-});
+    document.getElementById('numeroIdentificacion').addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9A-Za-z]/g, '');
+    });
 </script>
 </body>
 </html>
