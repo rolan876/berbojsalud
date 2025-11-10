@@ -88,6 +88,48 @@
             font-size: 14px;
         }
 
+        .privacy-notice {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .privacy-notice h3 {
+            color: #856404;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .privacy-notice p {
+            color: #856404;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .privacy-checkbox {
+            display: flex;
+            align-items: start;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .privacy-checkbox input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            cursor: pointer;
+        }
+
+        .privacy-checkbox label {
+            font-size: 14px;
+            color: #856404;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
         .form-group {
             margin-bottom: 25px;
         }
@@ -207,15 +249,15 @@
             .form-row {
                 grid-template-columns: 1fr;
             }
-
+            .sede-options {
+                flex-direction: column;
+            }
             .header, .form-container {
                 padding: 20px;
             }
-
             .logo {
                 font-size: 24px;
             }
-
             .info-item {
                 font-size: 13px;
             }
@@ -242,13 +284,13 @@
             100% { transform: rotate(360deg); }
         }
 
-        .horario-options {
+        .horario-options, .sede-options {
             display: flex;
             gap: 15px;
             margin-top: 10px;
         }
 
-        .horario-option {
+        .horario-option, .sede-option {
             flex: 1;
             padding: 15px;
             border: 2px solid #e0e0e0;
@@ -259,24 +301,45 @@
             background: white;
         }
 
-        .horario-option:hover {
+        .horario-option:hover, .sede-option:hover {
             border-color: #667eea;
             background: #f8f9ff;
         }
 
-        .horario-option.selected {
+        .horario-option.selected, .sede-option.selected {
             border-color: #667eea;
             background: #667eea;
             color: white;
         }
 
-        .horario-option input[type="radio"] {
+        .horario-option input[type="radio"], .sede-option input[type="radio"] {
             display: none;
         }
 
-        .horario-icon {
+        .horario-icon, .sede-icon {
             font-size: 24px;
             margin-bottom: 5px;
+        }
+
+        .sede-option {
+            padding: 20px;
+            border-width: 3px;
+        }
+
+        .sede-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .sede-name {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .sede-address {
+            font-size: 12px;
+            opacity: 0.8;
         }
     </style>
 </head>
@@ -293,7 +356,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
-                    <span>Carrera 19 #14-66, Sabanalarga, Atlántico</span>
+                    <span>2 Sedes: Sabanalarga y Baranoa</span>
                 </div>
                 <div class="info-item">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -314,7 +377,41 @@
             <h2 class="form-title">Solicitud de Cita Médica</h2>
             <p class="form-description">Complete el siguiente formulario y nos contactaremos con usted para confirmar su cita</p>
 
+            <!-- AVISO DE PRIVACIDAD -->
+            <div class="privacy-notice">
+                <h3>⚠️ Aviso Importante de Privacidad</h3>
+                <p>
+                    Este formulario solo recopila la información mínima necesaria para solicitar una cita médica. 
+                    No se utiliza con fines comerciales ni se comparten los datos con terceros.
+                </p>
+                <div class="privacy-checkbox">
+                    <input type="checkbox" id="privacyAccept" required>
+                    <label for="privacyAccept">
+                        <span class="required">*</span> Acepto proporcionar mi información únicamente para coordinar mi atención médica
+                    </label>
+                </div>
+            </div>
+
             <form id="appointmentForm">
+                <!-- SELECTOR DE SEDE -->
+                <div class="form-group">
+                    <label>¿En qué sede deseas tu cita? <span class="required">*</span></label>
+                    <div class="sede-options">
+                        <label class="sede-option" id="optionSabanalarga">
+                            <input type="radio" name="sede" value="Sabanalarga" required>
+                            <div class="sede-icon">🏥</div>
+                            <div class="sede-name">SABANALARGA</div>
+                            <div class="sede-address">Carrera 19 #14-66</div>
+                        </label>
+                        <label class="sede-option" id="optionBaranoa">
+                            <input type="radio" name="sede" value="Baranoa" required>
+                            <div class="sede-icon">🏥</div>
+                            <div class="sede-name">BARANOA</div>
+                            <div class="sede-address">[Por confirmar]</div>
+                        </label>
+                    </div>
+                </div>
+
                 <!-- Municipio -->
                 <div class="form-group">
                     <label>¿En qué municipio vives? <span class="required">*</span></label>
@@ -343,7 +440,7 @@
                 <!-- Tipo y Número de Identificación -->
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Tipo de identificación del paciente <span class="required">*</span></label>
+                        <label>Tipo de identificación <span class="required">*</span></label>
                         <select id="tipoIdentificacion" required>
                             <option value="">Seleccione...</option>
                             <option value="CC">Cédula de Ciudadanía</option>
@@ -355,7 +452,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Número de identificación del paciente <span class="required">*</span></label>
+                        <label>Número de identificación <span class="required">*</span></label>
                         <input type="text" id="numeroIdentificacion" required placeholder="Ej: 1234567890">
                     </div>
                 </div>
@@ -374,21 +471,25 @@
 
                 <!-- Especialidades -->
                 <div class="form-group">
-                    <label>Selecciona una de las siguientes especialidades <span class="required">*</span></label>
+                    <label>Selecciona una especialidad <span class="required">*</span></label>
                     <select id="especialidad" required>
                         <option value="">Seleccione...</option>
                         <option value="Medicina General">Medicina General</option>
-                        <option value="Odontología General">Odontología General</option>
+                        <option value="Medicina Interna">Medicina Interna</option>
+                        <option value="Odontología">Odontología</option>
                         <option value="Fisioterapia">Fisioterapia</option>
-                        <option value="Terapia Respiratoria">Terapia Respiratoria</option>
-                        <option value="Laboratorio Clínico">Laboratorio Clínico - Toma de Muestras</option>
-                        <option value="Prevención Salud Bucal">Prevención en Salud Bucal</option>
+                        <option value="Primera Infancia">Primera Infancia</option>
+                        <option value="Pediatría">Pediatría</option>
+                        <option value="Nutrición">Nutrición</option>
+                        <option value="Integración vital">Integración vital</option>
+                        <option value="Psicología">Psicología</option>
+                        <option value="Ninguna de las anteriores">Ninguna de las anteriores</option>
                     </select>
                 </div>
 
                 <!-- Horario Preferido -->
                 <div class="form-group">
-                    <label>¿Tu cita médica en qué horario te acomoda más? <span class="required">*</span></label>
+                    <label>¿En qué horario te acomoda más? <span class="required">*</span></label>
                     <div class="horario-options">
                         <label class="horario-option" id="optionManana">
                             <input type="radio" name="horario" value="Mañana" required>
@@ -407,8 +508,8 @@
 
                 <!-- Observaciones Adicionales -->
                 <div class="form-group">
-                    <label>¿Algo más que quieras agregar, con el fin de ayudarte y brindarte un mejor servicio?</label>
-                    <textarea id="observaciones" placeholder="Cualquier información adicional que consideres importante..."></textarea>
+                    <label>¿Algo más que quieras agregar?</label>
+                    <textarea id="observaciones" placeholder="Información adicional..."></textarea>
                 </div>
 
                 <button type="submit" class="btn-submit" id="submitBtn">📅 Solicitar Cita</button>
@@ -421,12 +522,12 @@
                 <div class="success-message" id="successMessage">
                     <h3>✅ ¡Solicitud Enviada Exitosamente!</h3>
                     <p>Hemos recibido tu solicitud de cita médica.</p>
-                    <p><strong>Nos contactaremos contigo por WhatsApp</strong> en las próximas horas para confirmar tu cita.</p>
+                    <p><strong>Nos contactaremos contigo por WhatsApp</strong> en las próximas horas.</p>
                     <div class="reference-box">
                         <p style="margin: 0; font-size: 14px;">Número de referencia:</p>
                         <div class="reference-number" id="referenceNumber"></div>
                     </div>
-                    <p style="margin-top: 20px; font-size: 14px; color: #666;">Guarda este número para cualquier consulta sobre tu cita.</p>
+                    <p style="margin-top: 20px; font-size: 14px; color: #666;">Guarda este número para consultas.</p>
                 </div>
             </form>
         </div>
@@ -437,133 +538,109 @@
         </div>
     </div>
 
-   <script>
-    // URLS DE GOOGLE APPS SCRIPT - CON COMILLAS
-    const URL_SABANALARGA = 'https://script.google.com/macros/s/AKfycbwNw4pj8712FpQNoh6fhnSTGyCkjdm0Iz4VMFrPw9YcXsChOW7XqYPAV0RuOyny80ou/exec';
-    const URL_BARANOA = 'https://script.google.com/macros/s/AKfycbwExHAEkGMHg1WFS6fpgjCnma6WGGpLn0Ciu9GpjSLvwrefNRNecaLKlPXx8DTrOzt9-g/exec';
+    <script>
+        // URLS DE GOOGLE APPS SCRIPT
+        const URL_SABANALARGA = 'https://script.google.com/macros/s/AKfycbwNw4pj8712FpQNoh6fhnSTGyCkjdm0Iz4VMFrPw9YcXsChOW7XqYPAV0RuOyny80ou/exec';
+        const URL_BARANOA = 'https://script.google.com/macros/s/AKfycbwExHAEkGMHg1WFS6fpgjCnma6WGGpLn0Ciu9GpjSLvwrefNRNecaLKlPXx8DTrOzt9-g/exec';
 
-    // Manejo de selección de sede
-    const optionSabanalarga = document.getElementById('optionSabanalarga');
-    const optionBaranoa = document.getElementById('optionBaranoa');
-
-    optionSabanalarga.addEventListener('click', function() {
-        optionSabanalarga.classList.add('selected');
-        optionBaranoa.classList.remove('selected');
-    });
-
-    optionBaranoa.addEventListener('click', function() {
-        optionBaranoa.classList.add('selected');
-        optionSabanalarga.classList.remove('selected');
-    });
-
-    // Manejo de selección de horario
-    const optionManana = document.getElementById('optionManana');
-    const optionTarde = document.getElementById('optionTarde');
-
-    optionManana.addEventListener('click', function() {
-        optionManana.classList.add('selected');
-        optionTarde.classList.remove('selected');
-    });
-
-    optionTarde.addEventListener('click', function() {
-        optionTarde.classList.add('selected');
-        optionManana.classList.remove('selected');
-    });
-
-    // Envío del formulario
-    document.getElementById('appointmentForm').addEventListener('submit', function(e) {
-        e.preventDefault(); // IMPORTANTE - Previene que se recargue la página
-
-        console.log('Formulario enviado'); // Para ver en consola
-
-        // Validar privacidad
-        if (!document.getElementById('privacyAccept').checked) {
-            alert('Debe aceptar el aviso de privacidad para continuar.');
-            return;
-        }
-
-        // Deshabilitar botón
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = true;
-        document.getElementById('loading').style.display = 'block';
-        submitBtn.style.display = 'none';
-
-        // Obtener valores
-        const sedeSeleccionada = document.querySelector('input[name="sede"]:checked');
-        const horarioSeleccionado = document.querySelector('input[name="horario"]:checked');
-
-        // Validar que se haya seleccionado sede
-        if (!sedeSeleccionada) {
-            alert('Por favor selecciona una sede');
-            submitBtn.disabled = false;
-            document.getElementById('loading').style.display = 'none';
-            submitBtn.style.display = 'block';
-            return;
-        }
-
-        // Crear objeto con datos
-        const formData = {
-            sede: sedeSeleccionada.value,
-            municipio: document.getElementById('municipio').value,
-            nombreCompleto: document.getElementById('nombreCompleto').value,
-            tipoIdentificacion: document.getElementById('tipoIdentificacion').value,
-            numeroIdentificacion: document.getElementById('numeroIdentificacion').value,
-            whatsapp: document.getElementById('whatsapp').value,
-            motivoSolicitud: document.getElementById('motivoSolicitud').value,
-            especialidad: document.getElementById('especialidad').value,
-            horarioPreferido: horarioSeleccionado ? horarioSeleccionado.value : '',
-            observaciones: document.getElementById('observaciones').value
-        };
-
-        console.log('Datos a enviar:', formData); // Para ver en consola
-
-        // Seleccionar URL según sede
-        const url = formData.sede === 'Sabanalarga' ? URL_SABANALARGA : URL_BARANOA;
-        
-        console.log('Enviando a:', url); // Para ver en consola
-
-        // Enviar a Google Sheets
-        fetch(url, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-                'Content-Type': 'text/plain'
-            },
-            body: JSON.stringify(formData)
-        })
-        .then(function() {
-            console.log('Enviado exitosamente');
-            
-            // Generar número de referencia
-            const referenceNum = 'BS-' + formData.sede.substring(0,3).toUpperCase() + '-' + Date.now().toString().slice(-6);
-            
-            // Mostrar mensaje de éxito
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('successMessage').style.display = 'block';
-            document.getElementById('referenceNumber').textContent = referenceNum;
-            
-            // Ocultar formulario
-            document.getElementById('appointmentForm').style.display = 'none';
-        })
-        .catch(function(error) {
-            console.error('Error al enviar:', error);
-            alert('Hubo un error al enviar la solicitud. Por favor intente nuevamente.');
-            
-            // Rehabilitar botón
-            submitBtn.disabled = false;
-            document.getElementById('loading').style.display = 'none';
-            submitBtn.style.display = 'block';
+        // Selección visual de sede
+        document.getElementById('optionSabanalarga').addEventListener('click', function() {
+            this.classList.add('selected');
+            document.getElementById('optionBaranoa').classList.remove('selected');
         });
-    });
 
-    // Validaciones
-    document.getElementById('whatsapp').addEventListener('input', function(e) {
-        this.value = this.value.replace(/[^0-9]/g, '');
-    });
+        document.getElementById('optionBaranoa').addEventListener('click', function() {
+            this.classList.add('selected');
+            document.getElementById('optionSabanalarga').classList.remove('selected');
+        });
 
-    document.getElementById('numeroIdentificacion').addEventListener('input', function(e) {
-        this.value = this.value.replace(/[^0-9A-Za-z]/g, '');
-    });
-</script>
+        // Selección visual de horario
+        document.getElementById('optionManana').addEventListener('click', function() {
+            this.classList.add('selected');
+            document.getElementById('optionTarde').classList.remove('selected');
+        });
+
+        document.getElementById('optionTarde').addEventListener('click', function() {
+            this.classList.add('selected');
+            document.getElementById('optionManana').classList.remove('selected');
+        });
+
+        // Envío del formulario
+        document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (!document.getElementById('privacyAccept').checked) {
+                alert('Debe aceptar el aviso de privacidad.');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            document.getElementById('loading').style.display = 'block';
+            submitBtn.style.display = 'none';
+
+            const sedeSeleccionada = document.querySelector('input[name="sede"]:checked');
+            const horarioSeleccionado = document.querySelector('input[name="horario"]:checked');
+
+            if (!sedeSeleccionada) {
+                alert('Selecciona una sede');
+                submitBtn.disabled = false;
+                document.getElementById('loading').style.display = 'none';
+                submitBtn.style.display = 'block';
+                return;
+            }
+
+            const formData = {
+                sede: sedeSeleccionada.value,
+                municipio: document.getElementById('municipio').value,
+                nombreCompleto: document.getElementById('nombreCompleto').value,
+                tipoIdentificacion: document.getElementById('tipoIdentificacion').value,
+                numeroIdentificacion: document.getElementById('numeroIdentificacion').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                motivoSolicitud: document.getElementById('motivoSolicitud').value,
+                especialidad: document.getElementById('especialidad').value,
+                horarioPreferido: horarioSeleccionado ? horarioSeleccionado.value : '',
+                observaciones: document.getElementById('observaciones').value || 'Sin observaciones'
+            };
+
+            const url = formData.sede === 'Sabanalarga' ? URL_SABANALARGA : URL_BARANOA;
+            
+            console.log('Enviando a:', url);
+            console.log('Datos:', formData);
+
+            fetch(url, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(function() {
+                const referenceNum = 'BS-' + formData.sede.substring(0,3).toUpperCase() + '-' + Date.now().toString().slice(-6);
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+                document.getElementById('referenceNumber').textContent = referenceNum;
+                document.getElementById('appointmentForm').style.display = 'none';
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+                alert('Error al enviar. Intente nuevamente.');
+                submitBtn.disabled = false;
+                document.getElementById('loading').style.display = 'none';
+                submitBtn.style.display = 'block';
+            });
+        });
+
+        // Validaciones
+        document.getElementById('whatsapp').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        document.getElementById('numeroIdentificacion').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9A-Za-z]/g, '');
+        });
+    </script>
 </body>
 </html>
